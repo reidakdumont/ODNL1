@@ -15,9 +15,10 @@ class Parser
         Parser();
         virtual ~Parser();
         void parse(char* filename);
+        Problem* getProblem();
     protected:
     private:
-        Problem prob_;
+        Problem* prob_;
 };
 
 #endif // PARSER_HH

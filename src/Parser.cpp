@@ -70,5 +70,11 @@ void Parser::parse(char* filename)
     }
     else
         std::cerr << "Impossible d'ouvrir le fichier !" << std::endl;
+    this->prob_ = p;
     p->print();
+}
+
+Problem* Parser::getProblem()
+{
+    return this->prob_;
 }
