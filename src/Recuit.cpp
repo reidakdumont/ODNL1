@@ -20,6 +20,8 @@ Recuit::Recuit(Problem* p)
 {
     this->prob = p;
     this->mat = p->getData();
+    for (int i = 0; i < this->mat.size(); i++)
+        this->exit.push_back(i+1);
 }
 
 Recuit::~Recuit()
@@ -79,6 +81,9 @@ void Recuit::swp(int i, int j)
 	std::vector<int> temp = this->mat.at(i);
 	this->mat.at(i) = this->mat.at(j);
 	this->mat.at(j) = temp;
+	int temppos = this->exit.at(i);
+	this->exit.at(i) = this->exit.at(j);
+	this->exit.at(j) = temppos;
 }
 
 void Recuit::recuit(double tau0)
@@ -129,6 +134,7 @@ void Recuit::recuit(double tau0)
                     best_T = T;
                     best_cost = cost_j;
                     this->sol = this->mat;
+                    this->exitsol = this->exit;
                     changeInBest = true;
                 }
                 // Back up best solution
@@ -174,5 +180,20 @@ void Recuit::recuit(double tau0)
             std::cout << best_cost << " false" << std::endl;
     //}
     this->mat = this->sol;
+    this->exit = this->exitsol;
     this->prob->setData(this->mat);
+}
+
+void Recuit::drawSol(char* filename)
+{
+    std::ofstream fichier(filename, ios::out | ios::trunc);  // ouverture en écriture avec effacement du fichier ouvert
+
+    if(fichier)
+    {
+        for (int i = 0; i < this->exit.size(); i++)
+            fichier << this->exit.at(i) << " ";
+        fichier.close();
+    }
+    else
+        cerr << "Impossible d'ouvrir le fichier !" << endl;
 }

@@ -11,5 +11,6 @@ int main()
     p->parse("PB50x10_1.txt");
     Recuit* r = new Recuit(p->getProblem());
     r->recuit(10);
+    r->drawSol("test.txt");
     return 0;
 }

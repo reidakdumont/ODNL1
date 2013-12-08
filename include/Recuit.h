@@ -26,11 +26,14 @@ class Recuit
 		double cost();
 		void recuit(double tau0);
         virtual ~Recuit();
+        void drawSol(char* filename);
     protected:
     private:
         double getInitialTemp(double tau0);
         void initializeLink();
         Problem* prob;
+        std::vector<int> exit;
+        std::vector<int> exitsol;
 		vector<vector<int> > mat;
 		vector<vector<int> > sol;
 
