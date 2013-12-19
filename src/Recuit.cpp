@@ -86,6 +86,32 @@ void Recuit::swp(int i, int j)
 	this->exit.at(j) = temppos;
 }
 
+double Recuit::getInitialTemp(double tau0)
+{
+    double res = 0;
+    int probsize = this->mat.size();
+    std::uniform_int_distribution<int> distrib(0,probsize-1);
+    std::default_random_engine generator;
+    for (int i = 0; i < 100; i++)
+    {
+        int r1 = distrib(generator);
+        int r2 = 0;
+        do
+        {
+            r2 = distrib(generator);
+        }
+        while (r1 == r2) ;
+        double firstcost = this->cost();
+        this->swp(r1,r2);
+        double secondcost = this->cost();
+        res = res + abs(firstcost-secondcost);
+    }
+    res = res / 100;
+    double T0 = - res / log(tau0);
+    std::cout << "res = " << res << " , log = " << 100 * log(tau0) << std::endl;
+    return T0;
+}
+
 void Recuit::recuit(double tau0)
 {
     double best_cost = 0;
@@ -97,9 +123,9 @@ void Recuit::recuit(double tau0)
     std::uniform_int_distribution<int> distrib(0,probsize-1);
     double best_T = 0;
     bool changeInBest = false;
-    /*for (int h = 0; h < 10; h++)
-    {*/
-        double T = 100;
+    for (int h = 0; h < 10; h++)
+    {
+        double T = getInitialTemp(tau0);
         std::cout << "T = " << T << std::endl;
         unsigned int t = 0, nbiter = 0 ;
         double cost_i, cost_j;
@@ -178,7 +204,7 @@ void Recuit::recuit(double tau0)
             std::cout << best_cost << " true" << std::endl;
         else
             std::cout << best_cost << " false" << std::endl;
-    //}
+    }
     this->mat = this->sol;
     this->exit = this->exitsol;
     this->prob->setData(this->mat);
