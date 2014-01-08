@@ -2,7 +2,7 @@
 
 #define T_INIT 6666666
 #define T_STEP 0.9
-#define T_STOP 0.000001
+#define T_STOP 0.000000001
 
 bool find(std::vector<int> vect, int f)
 {
@@ -74,7 +74,7 @@ double Recuit::cost()
         }
         res.push_back(temp);
     }
-    return res.at(matrice.size()-1).at(matrice.at(0).size()-1);
+    return res.at(res.size()-1).at(res.at(0).size()-1);
 }
 void Recuit::swp(int i, int j)
 {
@@ -92,7 +92,7 @@ double Recuit::getInitialTemp(double tau0)
     int probsize = this->mat.size();
     std::uniform_int_distribution<int> distrib(0,probsize-1);
     std::default_random_engine generator;
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 4*probsize; i++)
     {
         int r1 = distrib(generator);
         int r2 = 0;
@@ -106,13 +106,13 @@ double Recuit::getInitialTemp(double tau0)
         double secondcost = this->cost();
         res = res + abs(firstcost-secondcost);
     }
-    res = res / 100;
+    res = res / (4*probsize);
     double T0 = - res / log(tau0);
     std::cout << "res = " << res << " , log = " << 100 * log(tau0) << std::endl;
     return T0;
 }
 
-void Recuit::recuit(double tau0)
+void Recuit::recuit(double tau0, int sizelist)
 {
     double best_cost = 0;
     best_cost = this->cost();
@@ -123,7 +123,8 @@ void Recuit::recuit(double tau0)
     std::uniform_int_distribution<int> distrib(0,probsize-1);
     double best_T = 0;
     bool changeInBest = false;
-    for (int h = 0; h < 10; h++)
+    std::vector<std::pair<unsigned int, unsigned int> > listetabou;
+    for (int h = 0; h < 5; h++)
     {
         double T = getInitialTemp(tau0);
         std::cout << "T = " << T << std::endl;
@@ -146,12 +147,18 @@ void Recuit::recuit(double tau0)
                 //Compute inititial cost
                 cost_i = cost();
                 //Pick up two aleatory pieces
-                i = distrib(generator);
                 do
                 {
-                    j = distrib(generator);
-                }
-                while (i == j) ;
+                    i = distrib(generator);
+                    do
+                    {
+                        j = distrib(generator);
+                    }
+                    while (i == j) ;
+                }while(std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(i,j)) != listetabou.end() && std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(j,i)) != listetabou.end());
+                listetabou.push_back(std::pair<unsigned int, unsigned int>(i,j));
+                if (listetabou.size() > 2*probsize)
+                    listetabou.erase(listetabou.begin());
                 swp(i, j);
                 //Compute new cost
                 cost_j = cost();
@@ -186,6 +193,8 @@ void Recuit::recuit(double tau0)
                         this->swp(i,j); //Refuse the swap, so we reput the last conﬁguration
                 }
             }
+            /*if (!changeInBest)
+                descente(best_cost, generator, distrib, listetabou, T);*/
             std::cout << "T : " << T << " , t : " << t << " , nbiter : " << nbiter << " , accept : " << accept << " , acceptdelta : " << acceptdelta << " , moyrnd : " << rnd/(t-accept) << " , best_cost : " << best_cost << std::endl;
             changeInBest = false;
             if (accept+acceptdelta == 0)
@@ -208,6 +217,51 @@ void Recuit::recuit(double tau0)
     this->mat = this->sol;
     this->exit = this->exitsol;
     this->prob->setData(this->mat);
+}
+
+void Recuit::descente(double& best_cost,
+                      std::default_random_engine generator,
+                      std::uniform_int_distribution<int> distrib,
+                      std::vector<std::pair<unsigned int, unsigned int> > listetabou,
+                      double& T)
+{
+    std::cout << "descente" << std::endl;
+    unsigned int i,j;
+    int probsize = this->mat.size();
+    double c = 0;
+    for (int h=0; h < probsize; h++)
+    {
+        do
+        {
+            i = distrib(generator);
+            do
+            {
+                j = distrib(generator);
+            }
+            while (i == j) ;
+        }while(std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(i,j)) != listetabou.end() && std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(i,j)) != listetabou.end());
+        swp(i, j);
+
+        //Compute new cost
+        double cost_j = cost();
+        if (best_cost > cost_j)
+        {
+            best_cost = cost_j;
+            this->sol = this->mat;
+            this->exitsol = this->exit;
+        }
+    }
+    /*std::cout << abs(best_cost - c) << std::endl;
+    if (abs(best_cost - c) <= 500)
+    {
+        best_cost = c;
+        this->sol = this->mat;
+        this->exitsol = this->exit;
+    }
+    else if (abs(best_cost - c) <= 750)
+    {
+        T = T * 1.2;
+    }*/
 }
 
 void Recuit::drawSol(char* filename)
