@@ -25,7 +25,7 @@ class Recuit
         Recuit(Problem* p);
 		void swp(int i, int j);
 		double cost();
-		void recuit(double tau0, int sizelist);
+		void recuit(double tau0);
         virtual ~Recuit();
         void drawSol(char* filename);
     protected:

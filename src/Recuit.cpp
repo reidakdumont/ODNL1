@@ -112,7 +112,15 @@ double Recuit::getInitialTemp(double tau0)
     return T0;
 }
 
-void Recuit::recuit(double tau0, int sizelist)
+double fact(double n)
+{
+    if (n <= 1)
+        return 1;
+    else
+        return n * fact(n-1);
+}
+
+void Recuit::recuit(double tau0)
 {
     double best_cost = 0;
     best_cost = this->cost();
@@ -124,6 +132,7 @@ void Recuit::recuit(double tau0, int sizelist)
     double best_T = 0;
     bool changeInBest = false;
     std::vector<std::pair<unsigned int, unsigned int> > listetabou;
+    double sizelist = fact(probsize) / (fact(2)*fact(probsize-2));
     for (int h = 0; h < 5; h++)
     {
         double T = getInitialTemp(tau0);
@@ -157,7 +166,7 @@ void Recuit::recuit(double tau0, int sizelist)
                     while (i == j) ;
                 }while(std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(i,j)) != listetabou.end() && std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(j,i)) != listetabou.end());
                 listetabou.push_back(std::pair<unsigned int, unsigned int>(i,j));
-                if (listetabou.size() > 2*probsize)
+                if (listetabou.size() > sizelist)
                     listetabou.erase(listetabou.begin());
                 swp(i, j);
                 //Compute new cost
@@ -251,17 +260,6 @@ void Recuit::descente(double& best_cost,
             this->exitsol = this->exit;
         }
     }
-    /*std::cout << abs(best_cost - c) << std::endl;
-    if (abs(best_cost - c) <= 500)
-    {
-        best_cost = c;
-        this->sol = this->mat;
-        this->exitsol = this->exit;
-    }
-    else if (abs(best_cost - c) <= 750)
-    {
-        T = T * 1.2;
-    }*/
 }
 
 void Recuit::drawSol(char* filename)

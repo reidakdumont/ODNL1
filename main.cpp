@@ -4,13 +4,12 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char* argv[])
 {
-    cout << "Hello world!" << endl;
     Parser* p = new Parser();
-    p->parse("PB50x10_1.txt");
+    p->parse(argv[1]);
     Recuit* r = new Recuit(p->getProblem());
-    r->recuit(0.5,1000);
-    r->drawSol("test.txt");
+    r->recuit(0.5);
+    r->drawSol(argv[2]);
     return 0;
 }
