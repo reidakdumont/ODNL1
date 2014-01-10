@@ -166,7 +166,7 @@ void Recuit::recuit(double tau0)
                     while (i == j) ;
                 }while(std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(i,j)) != listetabou.end() && std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(j,i)) != listetabou.end());
                 listetabou.push_back(std::pair<unsigned int, unsigned int>(i,j));
-                if (listetabou.size() > sizelist)
+                if (listetabou.size() > sizelist/2)
                     listetabou.erase(listetabou.begin());
                 swp(i, j);
                 //Compute new cost

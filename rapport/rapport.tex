@@ -1,0 +1,147 @@
+\documentclass{report}
+
+% other packages %
+%\usepackage{graphicx}
+%\usepackage{titlesec}
+%\usepackage{url}
+\usepackage{fancybox}
+
+% lang : french %
+\usepackage[utf8]{inputenc}
+\usepackage{xspace}
+\usepackage[T1]{fontenc}
+\usepackage[english,frenchb]{babel}
+\usepackage[francais]{minitoc}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+%\usepackage[unicode,hidelinks]{hyperref}
+\setcounter{minitocdepth}{1}
+% mise en page %
+\pagestyle{empty}
+\begin{document}
+\dominitoc
+%%%%%%%%%%%%%%
+
+%\documentclass[pdftex,12pt,a4paper]{report}
+%\usepackage[pdftex]{graphicx}
+%\usepackage[francais]{babel}
+%\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage[top=2cm, bottom=2cm, left=3cm, right=3cm]{geometry}
+%\usepackage{graphicx}
+%\usepackage[toc,page]{appendix}
+%\usepackage{pdfpages}
+%\usepackage{color}
+%\usepackage{chngpage}
+%\usepackage{fancyhdr}
+%\usepackage[Sonny]{fncychap}
+%\usepackage{titlesec, blindtext, color}
+%\usepackage{lastpage}
+
+%\setcounter{tocdepth}{3}
+%\setcounter{secnumdepth}{3}
+%\setlength{\headheight}{14pt}
+%\renewcommand\headrulewidth{1pt}
+%\fancyhead[L]{Signature}
+%\fancyhead[R]{EPITA}
+%\definecolor{gray75}{gray}{0.75}
+%\newcommand{\hsp}{\hspace{20pt}}
+
+%\titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter\hsp\textcolor{gray75}{|}\hsp}{0pt}{\Huge\bfseries}
+
+%\renewcommand\footrulewidth{1pt}
+%\fancyfoot[L]{Signature}
+%\fancyfoot[R]{Page \thepage/\pageref{LastPage}}
+
+%\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+%\pagestyle{fancy}
+
+\begin{titlepage}
+\begin{center}
+\textsc{\LARGE ODNL}\\[1.5cm]
+\end{center}
+
+\begin{minipage}{0.4\textwidth}
+	\begin{flushleft} \large
+		\emph{Auteurs:}\\
+			Thibault \textsc{Lapassade} \\
+			Fabrice \textsc{Rougeau} \\
+			Florian \textsc{Thomassin} \\
+			Victor \textsc{Degliame}
+	\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+	\begin{flushright} \large
+		\emph{Relecture:} \\
+              Anne-Laurence \textsc{Putz}
+	\end{flushright}
+\end{minipage}
+\end{titlepage}
+
+\tableofcontents
+
+\chapter{Introduction}
+\minitoc
+
+\newpage
+
+\chapter{Premier problème}
+\minitoc
+\section{Réalisation}
+\subsection{Choix techniques}
+Nous avons choisi d'implémenter l'algorithme en C++, notamment dans un souci de performance d’exécution. On cherche en effet à obtenir la meilleure solution possible dans un délai de temps le plus court possible.
+
+\subsection{Implémentation}
+Il nous a fallu développer une fonction pour calculer le coût d'une solution, puisque l'on cherche à minimiser ce coût qui représente la fonction objectif, et une fonction qui échange 2 tâches, puisque c'est cette transformation qui a été choisit.
+
+Pour ce qui concerne la fonction objectif choisit, nous avons décidé de créer un tableau avec dans chaque case le temps totale nécessaire pour réaliser la tâche en fonction de la durée de la tâche précédente et la durée de la tâche sur la machine précédente. Au final, on obtient l'information du temps totale dans la case en bas à droite de notre tableau et c'est cette valeur que l'on essaie de minimiser.
+
+Pour ce qui concerne la fonction d'échange de 2 tâches, nous avons choisit de faire un random sur le premier indice de la tâche à échanger et ensuite un autre random sur le deuxième indice de la tâche à échanger. Nous faisons en sorte que les deux indices sont différents et si ils ne le sont pas, nous recalculons deux nouveaux indices. Une autre amélioration de cette fonction est que nous avons rajouté une pseudo-liste tabou, c'est à dire que nous mémorisons les échanges que nous avons déjà fait et si cet échange ou l'échange inverse devait être fait, on relance notre procédure de sélection des indices à échanger. Tout comme avec l'algorithme de la liste tabou, on fixe une taille à notre liste et lorsque cette taille est atteinte, on enlève le premier élément de notre pseudo-liste tabou.
+
+Une fois que l'on a ces deux fonctions, on se fixe un $\tau 0$, on tire une configuration initiale aléatoirement et on applique l'algorithme. On abaisse la température toute les n acceptations ou les m tours dans la boucle, n et m étant deux paramètres dépendant de la taille du problème. Pour ce qui est de la règle d'acceptation de Métropolis, nous utilisons une des fonctions fournit par la STL qui en l'occurrence permet de générer des nombres aléatoires de manière uniforme.
+
+\subsection{Résultats}
+Les résultats obtenus sont satisfaisantes. Pour avoir le plus de chance d'obtenir la meilleure solution, on lance 5 recuit simulé à la suite puisse que l'algorithme du recuit simulé dépend beaucoup de la solution initiale ainsi que des randoms effectués pendant l'exécution de l'algorithme. Pour ce qui concerne les résultats en eux-mêmes, l'algorithme s'exécute en moins de 15 minutes quelque soit le problème. Voici les résulats obtenus :\\
+\begin{tabular}{ll}
+	PB20x5.txt & 1278 \\
+	PB50x10.txt & 3037 \\
+	PB100x10.txt & 5824 \\
+\end{tabular}
+
+
+\section{Discussion sur le choix des paramètres}
+La résolution d'un tel problème de référence, puisque l'on connaît à l'avance la solution, nous permet de mettre au point et de régler la méthode d'optimisation elle-même : cela permet d'étudier la sensibilité du recuit simulé par rapport au réglage de ses principaux paramètres.
+
+Il convient d'abord d'identifier les différents paramètres du recuit simulé, à savoir :\\
+- le $\tau 0$\\
+- la décrémentation de la température\\
+- le critère correspondant à l'équilibre thermodynamique\\
+- la condition d'arrêt\\
+- la taille de notre pseudo-liste tabou\\
+
+En ce qui concerne la température, nous utilisons le $\tau 0$ pour dire ce que nous pensons de la solution initiale. Nous avons décidé de prendre un $\tau 0$ égale à 0.5 pour accepter environ une dégradation sur 2. Pour ce qui concerne la décrémentation de la température, nous multiplions la température par 0.9 en rapport avec ce que nous avons vu dans le cours et des résultats que nous avons pu avoir de notre coté. Il convient que la température de départ soit assez élevée dans la mesure où ainsi, on acceptera plus de dégradation en début et qu'on aura donc moins de chance de tomber dans un minimum local. Dans la même optique, la température ne doit pas être décrémenté trop brusquement, mais tout de même suffisante pour tendre vers une stabilisation du système sur le minimum global.
+
+En ce qui concerne la condition d'arrêt, nous stoppons l'algorithme lorsque la température est inférieure à 0.000001 (chose qui n'arrive jamais), ou que nous avons 5 palier de suite sans aucune acceptation puisque à ce moment on peut considérer qu'il n'y aura plus d'amélioration.
+
+En ce qui concerne la taille maximale de notre liste tabou, nous avons décidé d'utiliser la fonction de calcul du nombre de combinaison de 2 éléments parmi n, le tout diviser par deux.
+
+Les paramètres que nous avons choisis, nous permettent ainsi de trouver quasiment à coup sûr la solution du problème. Nous pourrions assouplir les paramètres choisis afin de faire moins d'itérations mais en pratique l'algorithme fonctionne très vite et de façon satisfaisante même si nous n'atteignons pas la valeur optimale connu pour le problème.
+
+\newpage
+
+\chapter{Deuxième problème}
+\minitoc
+\section{Réalisation}
+\subsection{Choix techniques}
+
+\subsection{Implémentation}
+
+\subsection{Résultats}
+
+\section{Discussion sur le choix des paramètres}
+
+\chapter{Conclusion générale}
+
+\end{document}
