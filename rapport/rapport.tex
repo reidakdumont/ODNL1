@@ -86,14 +86,14 @@
 \minitoc
 Lors de nos cours sur les algorithmes évolutionnaires et l'optimisation discrète non linéaire, nous avons vu plusieurs algorithmes plus ou moins efficace en fonction des problèmes rencontrés. Pour valider ce cours, nous devions implémenter deux algorithmes, un algorithme évolutionnaire et un recuit simulé ou une méthode taboue, sur deux problèmes donnés, en l'occurrence un problème d'ordonnancement de tâches sur des machines et un problème d'optimisation du nombre d'employé nécessaire pour tenir un planning.
 
-Nous avons décidé de faire un recuit simulé amélioré sur le premier problème et un algorithme génétique pour le second problème.
+Nous avons décidé de faire un recuit simulé amélioré pour le premier problème et un algorithme génétique pour le second problème.
 \newpage
 
 \chapter{Premier problème}
 \minitoc
 \section{Réalisation}
 \subsection{Choix techniques}
-Nous avons choisi d'implémenter l'algorithme en C++, notamment dans un souci de performance d’exécution. On cherche en effet à obtenir la meilleure solution possible dans un délai de temps le plus court possible.
+Nous avons choisi d'implémenter l'algorithme en C++, notamment dans un souci de performance d’exécution. On cherche en effet à obtenir la meilleure solution possible dans un délai de temps le plus court possible. De plus, dans la lib STL, il existe d'assez bon générateur de random ce qui appuis d'autant plus l'utilisation du C++.
 
 \subsection{Implémentation}
 Il nous a fallu développer une fonction pour calculer le coût d'une solution, puisque l'on cherche à minimiser ce coût qui représente la fonction objectif, et une fonction qui échange 2 tâches, puisque c'est cette transformation qui a été choisit.
@@ -133,7 +133,7 @@ En ce qui concerne la taille maximale de notre liste tabou, nous avons décidé 
 
 Les paramètres que nous avons choisis, nous permettent ainsi de trouver une bonne solution au problème. Nous pourrions assouplir les paramètres choisis afin de faire moins d'itérations mais en pratique l'algorithme fonctionne assez vite et de façon satisfaisante même si nous n'atteignons pas la valeur optimale connu pour le problème.
 
-\subsection{Critique de l'implémentation}
+\section{Critique de l'implémentation}
 Une amélioration possible aurait été d'essayer d'avoir de meilleurs résultats puisse que l'on n'arrive pas à l'optimum connu. On pourrait essayer de trouver une nouvelle technique pour améliorer notre recuit simulé et le rendre plus rapide ou plus efficace. Une autre amélioration pourrait être de changer la fonction d'évolution de notre problème c'est à dire ne plus prendre comme fonction l'échange de deux tâches au hasard sans tenir compte des autres tâches autour.
 
 On aurait pu aussi ne plus essayer d'optimiser toutes les machines en même temps mais une machine après l'autre mais nous nous sommes dit que cela ne serait sûrement pas assez efficace et nous donnerais de plus mauvais résultat.
@@ -153,6 +153,8 @@ Un des problèmes rencontrés au départ est que dans de nombreux cas on tombait
 
 \section{Discussion sur le choix des paramètres}
 
-\chapter{Conclusion générale}
+\section{Critique de l'implémentation}
 
+\chapter{Conclusion générale}
+Pour ce qui concerne le premier problème, on s'aperçoit que les résultats obtenus avec notre recuit simulé amélioré ne sont pas si mauvais et tourne assez vite même si l'on reste parfois coincé dans un minimum local trop longtemps et que l'on atteint pas la meilleure valeur connus.
 \end{document}
