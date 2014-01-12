@@ -84,7 +84,9 @@
 
 \chapter{Introduction}
 \minitoc
+Lors de nos cours sur les algorithmes évolutionnaires et l'optimisation discrète non linéaire, nous avons vu plusieurs algorithmes plus ou moins efficace en fonction des problèmes rencontrés. Pour valider ce cours, nous devions implémenter deux algorithmes, un algorithme évolutionnaire et un recuit simulé ou une méthode taboue, sur deux problèmes donnés, en l'occurrence un problème d'ordonnancement de tâches sur des machines et un problème d'optimisation du nombre d'employé nécessaire pour tenir un planning.
 
+Nous avons décidé de faire un recuit simulé amélioré sur le premier problème et un algorithme génétique pour le second problème.
 \newpage
 
 \chapter{Premier problème}
@@ -106,9 +108,11 @@ Une fois que l'on a ces deux fonctions, on se fixe un $\tau 0$, on tire une conf
 Les résultats obtenus sont satisfaisantes. Pour avoir le plus de chance d'obtenir la meilleure solution, on lance 5 recuit simulé à la suite puisse que l'algorithme du recuit simulé dépend beaucoup de la solution initiale ainsi que des randoms effectués pendant l'exécution de l'algorithme. Pour ce qui concerne les résultats en eux-mêmes, l'algorithme s'exécute en moins de 15 minutes quelque soit le problème. Voici les résulats obtenus :\\
 \begin{tabular}{ll}
 	PB20x5.txt & 1278 \\
-	PB50x10.txt & 3037 \\
+	PB50x10.txt & 3035 \\
 	PB100x10.txt & 5824 \\
 \end{tabular}
+
+Nous avons essayé de rallonger la durée d'exécution de l'algorithme mais cela ne modifiait pas la valeur finale renvoyée par notre algorithme.
 
 
 \section{Discussion sur le choix des paramètres}
@@ -125,9 +129,16 @@ En ce qui concerne la température, nous utilisons le $\tau 0$ pour dire ce que 
 
 En ce qui concerne la condition d'arrêt, nous stoppons l'algorithme lorsque la température est inférieure à 0.000001 (chose qui n'arrive jamais), ou que nous avons 5 palier de suite sans aucune acceptation puisque à ce moment on peut considérer qu'il n'y aura plus d'amélioration.
 
-En ce qui concerne la taille maximale de notre liste tabou, nous avons décidé d'utiliser la fonction de calcul du nombre de combinaison de 2 éléments parmi n, le tout diviser par deux.
+En ce qui concerne la taille maximale de notre liste tabou, nous avons décidé d'utiliser la fonction de calcul du nombre de combinaison de 2 éléments parmi n, le tout diviser par deux de manière à avoir une liste d'une taille raisonnable et efficace.
 
-Les paramètres que nous avons choisis, nous permettent ainsi de trouver quasiment à coup sûr la solution du problème. Nous pourrions assouplir les paramètres choisis afin de faire moins d'itérations mais en pratique l'algorithme fonctionne très vite et de façon satisfaisante même si nous n'atteignons pas la valeur optimale connu pour le problème.
+Les paramètres que nous avons choisis, nous permettent ainsi de trouver une bonne solution au problème. Nous pourrions assouplir les paramètres choisis afin de faire moins d'itérations mais en pratique l'algorithme fonctionne assez vite et de façon satisfaisante même si nous n'atteignons pas la valeur optimale connu pour le problème.
+
+\subsection{Critique de l'implémentation}
+Une amélioration possible aurait été d'essayer d'avoir de meilleurs résultats puisse que l'on n'arrive pas à l'optimum connu. On pourrait essayer de trouver une nouvelle technique pour améliorer notre recuit simulé et le rendre plus rapide ou plus efficace. Une autre amélioration pourrait être de changer la fonction d'évolution de notre problème c'est à dire ne plus prendre comme fonction l'échange de deux tâches au hasard sans tenir compte des autres tâches autour.
+
+On aurait pu aussi ne plus essayer d'optimiser toutes les machines en même temps mais une machine après l'autre mais nous nous sommes dit que cela ne serait sûrement pas assez efficace et nous donnerais de plus mauvais résultat.
+
+Un des problèmes rencontrés au départ est que dans de nombreux cas on tombait dans un minimum local et on avait du mal à en ressortir ensuite.  Malgré tout, avec l'ajout de notre pseudo-liste tabou, on évite de tomber trop souvent dans un minimum local et nous permet d'en sortir un peu plus rapidement.
 
 \newpage
 

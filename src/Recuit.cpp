@@ -120,6 +120,12 @@ double fact(double n)
         return n * fact(n-1);
 }
 
+double combinatoire(double n, double h)
+{
+    double res = fact(n) / (fact(h)*fact(n-h));
+    return res;
+}
+
 void Recuit::recuit(double tau0)
 {
     double best_cost = 0;
@@ -132,8 +138,11 @@ void Recuit::recuit(double tau0)
     double best_T = 0;
     bool changeInBest = false;
     std::vector<std::pair<unsigned int, unsigned int> > listetabou;
-    double sizelist = fact(probsize) / (fact(2)*fact(probsize-2));
-    for (int h = 0; h < 5; h++)
+    double sizelist = combinatoire(probsize,2);
+    std::uniform_int_distribution<int> dist(0,sizelist/2-1);
+    time_t begintime = time(NULL);
+    for(int h=0; h < 5; h++)
+    //while (difftime(time(NULL), begintime) <= 900)
     {
         double T = getInitialTemp(tau0);
         std::cout << "T = " << T << std::endl;
@@ -167,7 +176,7 @@ void Recuit::recuit(double tau0)
                 }while(std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(i,j)) != listetabou.end() && std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(j,i)) != listetabou.end());
                 listetabou.push_back(std::pair<unsigned int, unsigned int>(i,j));
                 if (listetabou.size() > sizelist/2)
-                    listetabou.erase(listetabou.begin());
+                    listetabou.erase(listetabou.begin() + dist(generator));
                 swp(i, j);
                 //Compute new cost
                 cost_j = cost();
@@ -237,23 +246,38 @@ void Recuit::descente(double& best_cost,
     std::cout << "descente" << std::endl;
     unsigned int i,j;
     int probsize = this->mat.size();
-    double c = 0;
+    double sizelist = combinatoire(probsize,2);
+    std::uniform_int_distribution<int> dist(0,sizelist/2-1);
     for (int h=0; h < probsize; h++)
     {
+        double c = 0;
+        double cost_j = 0;
         do
         {
-            i = distrib(generator);
             do
             {
-                j = distrib(generator);
-            }
-            while (i == j) ;
-        }while(std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(i,j)) != listetabou.end() && std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(i,j)) != listetabou.end());
-        swp(i, j);
+                i = distrib(generator);
+                do
+                {
+                    j = distrib(generator);
+                }
+                while (i == j) ;
+            }while(std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(i,j)) != listetabou.end() && std::find(listetabou.begin(), listetabou.end(), std::pair<unsigned int, unsigned int>(i,j)) != listetabou.end());
+            listetabou.push_back(std::pair<unsigned int, unsigned int>(i,j));
+            if (listetabou.size() > sizelist/2)
+                listetabou.erase(listetabou.begin() + dist(generator));
+            swp(i, j);
 
-        //Compute new cost
-        double cost_j = cost();
-        if (best_cost > cost_j)
+            //Compute new cost
+            cost_j = cost();
+            c++;
+            if (c >= sizelist)
+                break;
+            if (best_cost < cost_j)
+                swp(i,j);
+        }while (best_cost < cost_j);
+
+        if (best_cost >= cost_j)
         {
             best_cost = cost_j;
             this->sol = this->mat;
