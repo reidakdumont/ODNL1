@@ -84,7 +84,10 @@
 
 \chapter{Introduction}
 \minitoc
-Lors de nos cours sur les algorithmes évolutionnaires et l'optimisation discrète non linéaire, nous avons vu plusieurs algorithmes plus ou moins efficace en fonction des problèmes rencontrés. Pour valider ce cours, nous devions implémenter deux algorithmes, un algorithme évolutionnaire et un recuit simulé ou une méthode taboue, sur deux problèmes donnés, en l'occurrence un problème d'ordonnancement de tâches sur des machines et un problème d'optimisation du nombre d'employé nécessaire pour tenir un planning.
+Lors de nos cours sur les algorithmes évolutionnaires et l'optimisation discrète non linéaire, nous avons vu plusieurs
+algorithmes plus ou moins efficace en fonction des problèmes rencontrés. Pour valider ce cours, nous devions implémenter
+deux algorithmes, un algorithme évolutionnaire et un recuit simulé ou une méthode taboue, sur deux problèmes donnés, en
+l'occurrence un problème d'ordonnancement de tâches sur des machines et un problème d'optimisation du nombre d'employés nécessaire pour tenir un planning.
 
 Nous avons décidé de faire un recuit simulé amélioré pour le premier problème et un algorithme génétique pour le second problème.
 \newpage
@@ -153,12 +156,41 @@ Un des problèmes rencontrés au départ est que dans de nombreux cas on tombait
 
 \subsection{Implémentation}
 
-\subsection{Résultats}
+La première étape de l'algorithme est de générer une population de plannings. Pour ce faire, nous avions besoin d'une
+fonction permettant la génération aléatoire d'un planning. Son principe est assez simple: on choisit un point de départ
+au hasard puis on construit un trajet valable à partir de ce point (c'est à dire que les lieux concordent et les
+horraires se suivent) jusqu'à arriver à une impasse. Ce processus est ensuite répété jusqu'à ce que tous les trajets
+aient été pris en compte et ce pour chaque jour.
 
-\section{Discussion sur le choix des paramètres}
+La seconde étape est de créer une fonction de score qui permet d'évaluer les plannings et de les comparer. Cette
+fonction prend en compte la validité des trajets, les temps de travail en route et en pause de chaque employé et le cumul des horraires
+d'une semaine afin que la charge de travail ne dépasse pas 35h par employé. Enfin, le dernier élément pris en compte est
+le nombre d'employé car c'est ce qu'on cherche à minimiser.
+
+L'étape suivante consiste en la création de fonctions simulant la reproduction d'individus et leur mutation. La
+reproduction consiste à mélanger les deux plannings pour en obtenir un nouveau potentiellement plus performant. La
+mutation quant à elle prend la forme découpage et d'insertion de trajets d'un employé à un autre. On cherche dans un
+premier temps un employé qui a trop de travail dans une journée, on découpe un morceau de son trajet et on le donne à un
+employé qui n'a pas assez de travail ce jour là. Une fois qu'il n'existe plus d'employé travaillent trop, c'est aux
+employés ayant peu de travail qu'on s'attaque de façon à essayer de réduire le nombre d'employés.
+
+Enfin il ne reste plus qu'à itérer X fois sur la population en gardant à chaque itération les meilleurs plannings et en
+remplacant les plus mauvais par de nouveaux plannings aléatoires.
+
+\subsection{Résultats}
 
 \section{Critique de l'implémentation}
 
+L'ensemble des trajets générés est valables, cependant, notre algorithme converge assez mal et les planning obtenus
+contiennent trop d'employés qui travaillent peu. Nous pensons que le problème vient des mutations qui sont compliquées à
+implémenter et très coûteuses en temps de calcul. Peut-être aussi que notre modélisation n'est pas la bonne. Ce dont
+nous sommes sûr en revanche c'est qu'un algorithme type recuit simulé aurait été bien plus adapté à la résolution du
+problème. Malheureusement il ne nous a pas été possible d'améliorer cet aspect
+de l'algorithme par manque de temps. Cependant, le fait qu'aucun employé ne dépasse les horraires de travail
+réglementaire montre bien qu'au moins la première étape des mutations fonctionne bien.
+
 \chapter{Conclusion générale}
 Pour ce qui concerne le premier problème, on s'aperçoit que les résultats obtenus avec notre recuit simulé amélioré ne sont pas si mauvais et tourne assez vite même si l'on reste parfois coincé dans un minimum local trop longtemps et que l'on atteint pas la meilleure valeur connus.
+Sur le problème de création de planning pour les bus, nous nous sommes aperçu trop tard qu'un algorithme évolutionnaire
+n'était pas particulièrement adapté au problème. Nos résultats sont valables bien que peu optimisés.
 \end{document}
