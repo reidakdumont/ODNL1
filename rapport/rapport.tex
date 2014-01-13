@@ -84,7 +84,11 @@
 
 \chapter{Introduction}
 \minitoc
-Lors de nos cours sur les algorithmes évolutionnaires et l'optimisation discrète non linéaire, nous avons vu plusieurs algorithmes plus ou moins efficace en fonction des problèmes rencontrés. Pour valider ce cours, nous devions implémenter deux algorithmes, un algorithme évolutionnaire et un recuit simulé ou une méthode taboue, sur deux problèmes donnés, en l'occurrence un problème d'ordonnancement de tâches sur des machines et un problème d'optimisation du nombre d'employé nécessaire pour tenir un planning.
+Lors de nos cours sur les algorithmes évolutionnaires et l'optimisation discrète non linéaire, nous avons vu plusieurs
+algorithmes plus ou moins efficace en fonction des problèmes rencontrés. Pour valider ce cours, nous devions implémenter
+deux algorithmes, un algorithme évolutionnaire et un recuit simulé ou une méthode taboue, sur deux problèmes donnés, en
+l'occurrence un problème d'ordonnancement de tâches sur des machines et un problème d'optimisation du nombre d'employés
+nécessaire pour tenir un planning de bus.
 
 Nous avons décidé de faire un recuit simulé amélioré pour le premier problème et un algorithme génétique pour le second problème.
 \newpage
@@ -93,31 +97,47 @@ Nous avons décidé de faire un recuit simulé amélioré pour le premier probl�
 \minitoc
 \section{Réalisation}
 \subsection{Choix techniques}
-Nous avons choisi d'implémenter l'algorithme en C++, notamment dans un souci de performance d’exécution. On cherche en effet à obtenir la meilleure solution possible dans un délai de temps le plus court possible. De plus, dans la lib STL, il existe d'assez bon générateur de random ce qui appuis d'autant plus l'utilisation du C++.
+Nous avons choisi d'implémenter l'algorithme en C++, notamment dans un souci de performance d’exécution. On cherche en
+effet à obtenir la meilleure solution possible dans un délai de temps le plus court possible. De plus, dans la
+bibliothèque STL, il existe d'assez bons générateurs de random ce qui appuie d'autant plus l'utilisation du C++.
 
 \subsection{Implémentation}
-Il nous a fallu développer une fonction pour calculer le coût d'une solution, puisque l'on cherche à minimiser ce coût qui représente la fonction objectif, et une fonction qui échange 2 tâches, puisque c'est cette transformation qui a été choisit.
+Il nous a fallu développer une fonction pour calculer le coût d'une solution, puisque l'on cherche à minimiser ce coût
+qui représente la fonction objectif, et une fonction qui échange 2 tâches, puisque c'est cette transformation qui a été
+choisie.
 
-Pour ce qui concerne la fonction objectif choisit, nous avons décidé de créer un tableau avec dans chaque case le temps totale nécessaire pour réaliser la tâche en fonction de la durée de la tâche précédente et la durée de la tâche sur la machine précédente. Au final, on obtient l'information du temps totale dans la case en bas à droite de notre tableau et c'est cette valeur que l'on essaie de minimiser.
+Pour ce qui concerne la fonction objectif choisie, nous avons décidé de créer un tableau avec dans chaque case le temps
+total nécessaire pour réaliser la tâche en fonction de la durée de la tâche précédente et la durée de la tâche sur la
+machine précédente. Finalement, nous obtenons l'information du temps total dans la case en bas à droite de notre tableau et c'est cette valeur que l'on essaie de minimiser.
 
-Pour ce qui concerne la fonction d'échange de 2 tâches, nous avons choisit de faire un random sur le premier indice de la tâche à échanger et ensuite un autre random sur le deuxième indice de la tâche à échanger. Nous faisons en sorte que les deux indices sont différents et si ils ne le sont pas, nous recalculons deux nouveaux indices. Une autre amélioration de cette fonction est que nous avons rajouté une pseudo-liste tabou, c'est à dire que nous mémorisons les échanges que nous avons déjà fait et si cet échange ou l'échange inverse devait être fait, on relance notre procédure de sélection des indices à échanger. Tout comme avec l'algorithme de la liste tabou, on fixe une taille à notre liste et lorsque cette taille est atteinte, on enlève le premier élément de notre pseudo-liste tabou.
+Pour ce qui concerne la fonction d'échange de 2 tâches, nous avons choisi de faire de l'aléatoire sur le premier indice
+de la tâche à échanger et ensuite un autre aléatoire sur le deuxième indice de la tâche à échanger. Nous faisons en
+sorte que les deux indices soient différents. Si ils ne le sont pas, nous recalculons deux nouveaux indices. Une autre
+amélioration de cette fonction est que nous avons rajouté une pseudo-liste taboue, c'est à dire que nous mémorisons les
+échanges que nous avons déjà fait et si cet échange ou l'échange inverse devait être fait, on relance notre procédure de
+sélection des indices à échanger. Tout comme avec l'algorithme de la liste taboue, on fixe une taille à notre liste et lorsque cette taille est atteinte, on enlève le premier élément de notre pseudo-liste tabou.
 
-Une fois que l'on a ces deux fonctions, on se fixe un $\tau 0$, on tire une configuration initiale aléatoirement et on applique l'algorithme. On abaisse la température toute les n acceptations ou les m tours dans la boucle, n et m étant deux paramètres dépendant de la taille du problème. Pour ce qui est de la règle d'acceptation de Métropolis, nous utilisons une des fonctions fournit par la STL qui en l'occurrence permet de générer des nombres aléatoires de manière uniforme.
+Une fois que l'on a ces deux fonctions, on se fixe un $\tau 0$, on tire une configuration initiale aléatoirement et on
+applique l'algorithme. On abaisse la température toutes les n acceptations ou les m tours dans la boucle, n et m étant
+deux paramètres dépendant de la taille du problème. Pour ce qui est de la règle d'acceptation de Métropolis, nous
+utilisons une des fonctions fournies par la STL qui en l'occurrence permet de générer des nombres aléatoires de manière uniforme.
 
 \subsection{Résultats}
 Les résultats obtenus sont satisfaisantes. Pour avoir le plus de chance d'obtenir la meilleure solution, on lance 5 recuit simulé à la suite puisse que l'algorithme du recuit simulé dépend beaucoup de la solution initiale ainsi que des randoms effectués pendant l'exécution de l'algorithme. Pour ce qui concerne les résultats en eux-mêmes, l'algorithme s'exécute en moins de 15 minutes quelque soit le problème. Voici les résulats obtenus :
 
+
 \begin{tabular}{|c|c|}
 	\hline
 	Nom du problème & Coût total\\
-	\hline	
+	\hline
 	PB20x5.txt & 1278 \\
 	PB50x10.txt & 3035 \\
 	PB100x10.txt & 5824 \\
 	\hline
 \end{tabular}\\
 
-Nous avons essayé de rallonger la durée d'exécution de l'algorithme mais cela ne modifiait pas la valeur finale renvoyée par notre algorithme et on peut donc considérer que l'on obtient les mêmes résultats pour un temps supplémentaire.
+Nous avons essayé de rallonger la durée d'exécution de l'algorithme mais cela ne modifiait pas la valeur finale renvoyée
+et nous pouvons donc considérer que l'on obtient les mêmes résultats pour un temps supplémentaire.
 
 
 \section{Discussion sur le choix des paramètres}
@@ -130,20 +150,32 @@ Il convient d'abord d'identifier les différents paramètres du recuit simulé, 
 - la condition d'arrêt\\
 - la taille de notre pseudo-liste tabou\\
 
-En ce qui concerne la température, nous utilisons le $\tau 0$ pour dire ce que nous pensons de la solution initiale. Nous avons décidé de prendre un $\tau 0$ égale à 0.5 pour accepter environ une dégradation sur 2. Pour ce qui concerne la décrémentation de la température, nous multiplions la température par 0.9 en rapport avec ce que nous avons vu dans le cours et des résultats que nous avons pu avoir de notre coté. Il convient que la température de départ soit assez élevée dans la mesure où ainsi, on acceptera plus de dégradation en début et qu'on aura donc moins de chance de tomber dans un minimum local. Dans la même optique, la température ne doit pas être décrémenté trop brusquement, mais tout de même suffisamment pour tendre vers une stabilisation du système sur le minimum global.
+En ce qui concerne la température, nous utilisons le $\tau 0$ pour dire ce que nous pensons de la solution initiale.
+Nous avons décidé de prendre un $\tau 0$ égal à 0.5 pour accepter environ une dégradation sur 2. Pour ce qui concerne la
+décrémentation de la température, nous multiplions la température par 0.9 en rapport avec ce que nous avons vu dans le
+cours et des résultats que nous avons pu avoir de notre coté. Il convient que la température de départ soit assez élevée
+dans la mesure où ainsi, on acceptera plus de dégradation en début et qu'on aura donc moins de chance de tomber dans un
+minimum local. Dans la même optique, la température ne doit pas être décrémentée trop brusquement, mais tout de même suffisamment pour tendre vers une stabilisation du système sur le minimum global.
 
-En ce qui concerne la condition d'arrêt, nous stoppons l'algorithme lorsque la température est inférieure à 0.000001 (chose qui n'arrive jamais), ou que nous avons 5 palier de suite sans aucune acceptation puisque à ce moment on peut considérer qu'il n'y aura plus d'amélioration.
+En ce qui concerne la condition d'arrêt, nous stoppons l'algorithme lorsque la température est inférieure à 0.000001
+(chose qui n'arrive jamais), ou que nous avons 5 paliers de suite sans aucune acceptation puisque à ce moment on peut considérer qu'il n'y aura plus d'amélioration.
 
-En ce qui concerne la taille maximale de notre liste tabou, nous avons décidé d'utiliser la fonction de calcul du nombre de combinaison de 2 éléments parmi n, le tout diviser par deux de manière à avoir une liste d'une taille raisonnable et efficace.
+En ce qui concerne la taille maximale de notre liste tabou, nous avons décidé d'utiliser la fonction de calcul du nombre
+de combinaisons de 2 éléments parmi n, le tout diviser par deux de manière à avoir une liste d'une taille raisonnable et efficace.
 
-Les paramètres que nous avons choisis, nous permettent ainsi de trouver une bonne solution au problème. Nous pourrions assouplir les paramètres choisis afin de faire moins d'itérations mais en pratique l'algorithme fonctionne assez vite et de façon satisfaisante même si nous n'atteignons pas la valeur optimale connu pour le problème.
+Les paramètres que nous avons choisis nous permettent ainsi de trouver une bonne solution au problème. Nous pourrions
+assouplir les paramètres choisis afin de faire moins d'itérations mais en pratique l'algorithme fonctionne assez vite et
+de façon satisfaisante même si nous n'atteignons pas la valeur optimale connue pour le problème.
 
 \section{Critique de l'implémentation}
 Une amélioration possible aurait été d'essayer d'avoir de meilleurs résultats puisse que l'on n'arrive pas à l'optimum connu. On pourrait essayer de trouver une nouvelle technique pour améliorer notre recuit simulé et le rendre plus rapide ou plus efficace. Une autre amélioration pourrait être de changer la fonction d'évolution de notre problème c'est à dire ne plus prendre comme fonction l'échange de deux tâches au hasard sans tenir compte des autres tâches autour.
 
-On aurait pu aussi ne plus essayer d'optimiser toutes les machines en même temps mais une machine après l'autre mais nous nous sommes dit que cela ne serait sûrement pas assez efficace et nous donnerais de plus mauvais résultat.
+Nous aurions aussi pu ne plus essayer d'optimiser toutes les machines en même temps mais une machine après l'autre. Nous
+avons cependant pensé que cela ne serait sûrement pas assez efficace et donnerait de plus mauvais résultats.
 
-Un des problèmes rencontrés au départ est que dans de nombreux cas on tombait dans un minimum local et on avait du mal à en ressortir ensuite.  Malgré tout, avec l'ajout de notre pseudo-liste tabou, on évite de tomber trop souvent dans un minimum local et nous permet d'en sortir un peu plus rapidement.
+Un des problèmes rencontrés au départ est que dans de nombreux cas, nous tombions dans un minimum local et nous avions
+du mal à en sortir. Cependant, avec l'ajout de notre pseudo-liste tabou nous évitons de tomber trop souvent dans un
+minimum local et nous en sortons un peu plus rapidement.
 
 \newpage
 
@@ -151,15 +183,54 @@ Un des problèmes rencontrés au départ est que dans de nombreux cas on tombait
 \minitoc
 \section{Réalisation}
 \subsection{Choix techniques}
+Ce second problème consiste à créer un emploi du temps pour des chauffeurs routiers. Afin de réaliser cette tache nous avons décidé
+d'utiliser un algorithme génétique.\\
+Afin d'apliquer cette methode nous avons définis la population comme étant les plannings nous permettant ainsi de faire des mutations et
+des accouplements. Comme précédemment, nous avons développé en C++11 pour des raisons de performance.
 
 \subsection{Implémentation}
 
-\subsection{Résultats}
+La première étape de l'algorithme est de générer une population de plannings. Pour ce faire, nous avions besoin d'une
+fonction permettant la génération aléatoire d'un planning. Son principe est assez simple: on choisit un point de départ
+au hasard puis on construit un trajet valable à partir de ce point (c'est à dire que les lieux concordent et les
+horraires se suivent) jusqu'à arriver à une impasse. Ce processus est ensuite répété jusqu'à ce que tous les trajets
+aient été pris en compte et ce pour chaque jour.
 
-\section{Discussion sur le choix des paramètres}
+La seconde étape est de créer une fonction de score qui permet d'évaluer les plannings et de les comparer. Cette
+fonction prend en compte la validité des trajets, les temps de travail en route et en pause de chaque employé et le cumul des horraires
+d'une semaine afin que la charge de travail ne dépasse pas 35h par employé. Enfin, le dernier élément pris en compte est
+le nombre d'employé car c'est ce qu'on cherche à minimiser.
+
+L'étape suivante consiste en la création de fonctions simulant la reproduction d'individus et leur mutation. La
+reproduction consiste à mélanger les deux plannings pour en obtenir un nouveau potentiellement plus performant. La
+mutation quant à elle prend la forme découpage et d'insertion de trajets d'un employé à un autre. On cherche dans un
+premier temps un employé qui a trop de travail dans une journée, on découpe un morceau de son trajet et on le donne à un
+employé qui n'a pas assez de travail ce jour là. Une fois qu'il n'existe plus d'employé travaillent trop, c'est aux
+employés ayant peu de travail qu'on s'attaque de façon à essayer de réduire le nombre d'employés.
+
+Enfin il ne reste plus qu'à itérer X fois sur la population en gardant à chaque itération les meilleurs plannings et en
+remplacant les plus mauvais par de nouveaux plannings aléatoires.
+
+\subsection{Résultats}
+Après avoir lancé notre méthode sur les fichiers de tests fournis, nous avons constaté des résultats valables mais qui peuvent être améliorés.\\
+
+Nous arrivons actuellement à avoir des résultats acceptable d'un point de vue chemin emprunté et temps sur des fichier de tests comprenant
+environ 50 destinations en effectuant 100 itérations avec 100 mutations et quelques accouplements à chaque fois.\\
+De plus, le temps de calcul est acceptable car dans le cas cité ci-desssus, nous n'avons besoin que de quelques minutes
+pour obtenir un résultat.
 
 \section{Critique de l'implémentation}
 
+L'ensemble des trajets générés est valables, cependant, notre algorithme converge assez mal et les planning obtenus
+contiennent trop d'employés qui travaillent peu. Nous pensons que le problème vient des mutations qui sont compliquées à
+implémenter et très coûteuses en temps de calcul. Peut-être aussi que notre modélisation n'est pas la bonne. Ce dont
+nous sommes sûr en revanche c'est qu'un algorithme type recuit simulé aurait été bien plus adapté à la résolution du
+problème. Malheureusement il ne nous a pas été possible d'améliorer cet aspect
+de l'algorithme par manque de temps. Cependant, le fait qu'aucun employé ne dépasse les horraires de travail
+réglementaire montre bien qu'au moins la première étape des mutations fonctionne bien.
+
 \chapter{Conclusion générale}
 Pour ce qui concerne le premier problème, on s'aperçoit que les résultats obtenus avec notre recuit simulé amélioré ne sont pas si mauvais et tourne assez vite même si l'on reste parfois coincé dans un minimum local trop longtemps et que l'on atteint pas la meilleure valeur connus.
+Sur le problème de création de planning pour les bus, nous nous sommes aperçu trop tard qu'un algorithme évolutionnaire
+n'était pas particulièrement adapté au problème. Nos résultats sont valables bien que peu optimisés.
 \end{document}
