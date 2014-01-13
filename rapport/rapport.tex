@@ -155,9 +155,8 @@ Un des problèmes rencontrés au départ est que dans de nombreux cas on tombait
 \subsection{Choix techniques}
 Ce second problème, consiste à créer un emploi du temps pour des chauffeurs routiers. Afin de réaliser cette tache nous avons décidé
 d'utilisé un algorithme génétique.\\
-
 Afin d'apliquer cette methode nous avons définis la population comme étant les plannings nous permettant ainsi de faire des mutations et
-des accouplements.\\
+des accouplements. Comme précédemment, nous avons tout développé en C++11.
 
 \subsection{Implémentation}
 
@@ -183,6 +182,11 @@ Enfin il ne reste plus qu'à itérer X fois sur la population en gardant à chaq
 remplacant les plus mauvais par de nouveaux plannings aléatoires.
 
 \subsection{Résultats}
+Après avoir lancé notre méthode sur les fichiers de tests fournis, nous avons constaté des résultats acceptable. Mais qui peuvent être améliorés.\\
+
+Nous arrivons actuellement à avoir des résultats acceptable d'un point de vue chemin emprinté et temps sur des fichier de tests comprenant
+environ 50 destination en effectuant 10 itérations avec 100 mutations à chaque fois.\\
+Deplus, le temps de calcule est accèptable car dans le cas cité ci-desssus, nous avons besoin de quelque seconde pour avoir le résultat.
 
 \section{Critique de l'implémentation}
 
